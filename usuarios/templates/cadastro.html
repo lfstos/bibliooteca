@@ -38,13 +38,13 @@
                 <form action="{% url 'valida_cadastro' %}" method="POST">
                     {% csrf_token %}
                     <label>Nome</label>
-                    <input class="form-control" name="nome" type="text" placeholder="Nome...">
+                    <input class="form-control" name="username" type="text" placeholder="Nome...">
                     <br>
                     <label>Email</label>
                     <input class="form-control" name="email" type="text" placeholder="Email...">
                     <br>
                     <label>Senha</label>
-                    <input class="form-control" name="senha" type="password" placeholder="Senha...">
+                    <input class="form-control" name="password" type="password" placeholder="Senha...">
                     <br>
                     <input class="btn btn-info btn-lg" type="submit" value="Enviar">
                     <a href='{% url 'login' %}' class="btn btn-warning btn-lg">Login</a
