@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Usuario
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login as log
-from django.http import HttpResponse
+from .models import Usuario
 
 # Create your views here.
 
 
 def login(request):
-    return render(request, 'registration/login.html')
+    status = request.GET.get('status')
+    return render(request, 'registration/login.html', {'status': status})
 
 
 def cadastro(request):
@@ -22,7 +22,7 @@ def valida_cadastro(request):
     senha = request.POST.get('password')
 
     try:
-        user = get_object_or_404(Usuario, email=email)
+        get_object_or_404(Usuario, email=email)
         return redirect('/auth/cadastro/?status=3')
     except:
         if len(nome.strip()) == 0 or len(email.strip()) == 0:
