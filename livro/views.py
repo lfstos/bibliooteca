@@ -11,28 +11,30 @@ def home(request):
     id = request.session['usuario']
     livros = Livros.objects.filter(usuario_id=id)
     form = CadastroLivroForm()
+    form.fields['usuario'].initial = request.session['usuario']
+    form.fields['categoria'].queryset = Categoria.objects.filter(
+        usuario=request.session['usuario'])
     context = {
         'livros': livros,
         'usuario_logado': request.session['usuario'],
         'form': form
     }
-
     return render(request, 'home.html', context)
 
 
 @login_required(login_url='/auth/login/?status=2')
 def ver_livro(request, id):
     livro = Livros.objects.get(id=id)
-
     if request.session.get('usuario') == livro.usuario_id:
-        categorias = Categoria.objects.filter(
-            usuario_id=request.session.get('usuario'))
+        form = CadastroLivroForm()
+        form.fields['categoria'].queryset = Categoria.objects.filter(
+            usuario=request.session['usuario'])
         emprestimos = Emprestimos.objects.filter(livro=livro)
         context = {
             'livro': livro,
-            'categorias': categorias,
             'emprestimos': emprestimos,
-            'usuario_logado': request.session['usuario']
+            'usuario_logado': request.session['usuario'],
+            'form': form
         }
         return render(request, 'ver_livro.html', context)
     else:
@@ -46,5 +48,13 @@ def cadastrar_livro(request):
         form = CadastroLivroForm(request.POST)
         if form.is_valid():
             form.save()
-        return HttpResponse(form)
-    return HttpResponse('GET')
+            return redirect('/livro/home/')
+        else:
+            return HttpResponse('Dados inválidos')
+
+
+@login_required(login_url='/auth/login/?status=2')
+def excluir_livro(request, id):
+    livro = Livros.objects.get(id=id)
+    livro.delete()
+    return redirect("/livro/home/")
